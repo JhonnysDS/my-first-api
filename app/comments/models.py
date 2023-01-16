@@ -7,6 +7,7 @@ class Comments(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
     post = db.relationship('Posts', backref=db.backref('comments', lazy=True))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def to_dict(self):
         return {
