@@ -9,9 +9,10 @@ from app.posts.models import Posts
 
 @posts_bp.route('/posts', methods=['GET'])
 @token_required
-def get_posts(current_user):
+def get_posts():
+
     #llamamos todos los registros de la tabla posts
-    posts = Posts.query.filter_by(user_id=current_user.id).all()
+    posts = Posts.query.all()
     #los mostramos
     return jsonify([post.to_dict() for post in posts])
 
