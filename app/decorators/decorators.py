@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import wraps
 from flask import request, g
 import jwt
@@ -23,7 +24,13 @@ def token_required(f):
                     }, 401)
 
         from entrypoint import app
-        dataAuthToken = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+        try:
+            dataAuthToken = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"],verify=verify_expiration)
+        except jwt.ExpiredSignatureError:
+            return({
+                        "isLogged": False,
+                        "messages": "Token expirado."
+                    }, 401)
         currentUser = Users.get_by_id(dataAuthToken['id'])
 
         if currentUser is None:
@@ -36,3 +43,18 @@ def token_required(f):
         return f(*args, **kwargs)
 
     return decorated
+
+
+
+
+def verify_expiration(payload):
+    """
+    Function to verify the expiration time of the token. It receives the payload of the token and returns a boolean
+    indicating whether the token has expired or not.
+    """
+    now = datetime.utcnow()
+    exp = datetime.fromtimestamp(payload['exp'])
+    if now > exp:
+        return False
+    return True
+

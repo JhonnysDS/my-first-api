@@ -42,7 +42,7 @@ def login():
                 {'id': user.id,
                  'username': user.username,
                  'exp': datetime.utcnow() +
-                        timedelta(minutes=30),
+                        timedelta(days=1),
                  "isLogged":True },
                 app.config['SECRET_KEY'], algorithm='HS256')
             print(token)

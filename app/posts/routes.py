@@ -1,5 +1,7 @@
+import jwt
+
 from app import db
-from app.auth.models import Users
+
 from app.decorators.decorators import token_required
 from app.posts import posts_bp
 from flask import request, jsonify
@@ -29,24 +31,27 @@ def get_post(post_id):
 
 
 @posts_bp.route('/create-posts', methods=['GET', 'POST'])
-@token_required
 def create_post():
-    #Obtenemos los datos de la tabla en un json
-    data = request.get_json()
-    #Get the user who created the post
-    user = Users.query.filter_by(username=data['username']).first()
-    try:
-        #indicamos los campos que se le agrega datos
-        post = Posts(title=data['title'],
-                     content=data['content'],
-                     user_id=user.id)
-        #Guardamos en la base de datos
-        db.session.add(post)
-        db.session.commit()
-        return jsonify(post.to_dict()), 201
-    except Exception:
-        #Si no se pudo guardar, mostramos este mensaje
-        return jsonify({'Message': 'could not create a post'}), 500
+    if 'Authorization' in request.headers:
+        token = request.headers['Authorization']
+
+        if token:
+            token = token.split(" ")[1]
+
+        from entrypoint import app
+        dataAuthToken = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+        user_id = dataAuthToken['id']
+        data = request.get_json()
+        try:
+            post = Posts(title=data['title'],
+                         content=data['content'],
+                         user_id=user_id)
+            db.session.add(post)
+            db.session.commit()
+            return jsonify(post.to_dict()), 201
+        except Exception:
+            return jsonify({'Message': 'could not create a post'}), 500
+
 
 @posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
 def update_post(post_id):
