@@ -13,7 +13,7 @@ def get_comments(post_id):
     comments = post.comments
     if len(comments) == 0:
         return  jsonify({"Message": "No yet commented on"})
-    return jsonify({'comments': [comment.to_dict() for comment in comments]})
+    return jsonify([comment.to_dict() for comment in comments])
 
 
 @comments_bp.route('/posts/<int:post_id>/comments', methods=['GET', 'POST'])

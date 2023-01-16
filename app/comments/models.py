@@ -9,9 +9,12 @@ class Comments(db.Model):
     post = db.relationship('Posts', backref=db.backref('comments', lazy=True))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
+
+#la manera en la que queremos mostrar el json
     def to_dict(self):
         return {
             'id': self.id,
             'post_id': self.post_id,
+            'user_id': self.user_id,
             'content': self.content
         }
