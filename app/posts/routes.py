@@ -20,6 +20,7 @@ def get_posts():
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['GET'])
+@token_required
 def get_post(post_id):
     #Obtenemos un registro de la tabla posts por su id.
     post = Posts.query.get(post_id)
@@ -31,6 +32,7 @@ def get_post(post_id):
 
 
 @posts_bp.route('/create-posts', methods=['GET', 'POST'])
+@token_required
 def create_post():
     if 'Authorization' in request.headers:
         token = request.headers['Authorization']
@@ -54,6 +56,7 @@ def create_post():
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
+@token_required
 def update_post(post_id):
     #Obtenemos el json de los datos del post
     data = request.get_json()
@@ -71,6 +74,7 @@ def update_post(post_id):
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['DELETE'])
+@token_required
 def delete_post(post_id):
     #Obtenemos el json de los datos del post
     data = request.get_json()

@@ -34,6 +34,7 @@ def create_comment(post_id):
     return jsonify({'comment': comment.to_dict()}), 201
 
 @comments_bp.route('/comments/<int:comment_id>', methods=['PUT'])
+@token_required
 def edit_comment(comment_id):
     data = request.get_json()
     comment = Comments.query.filter_by(id=comment_id).first()
@@ -43,6 +44,7 @@ def edit_comment(comment_id):
 
 
 @comments_bp.route('/comments/<int:comment_id>', methods=['DELETE'])
+@token_required
 def delete_comment(comment_id):
     comment = Comments.query.get(comment_id)
     db.session.delete(comment)
