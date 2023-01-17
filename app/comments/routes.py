@@ -38,6 +38,8 @@ def create_comment(post_id):
 def edit_comment(comment_id):
     data = request.get_json()
     comment = Comments.query.filter_by(id=comment_id).first()
+    if g.current_user.id != comment.user_id:
+        return  jsonify({"message": "Unauthorized"}), 401
     comment.content = data['content']
     db.session.commit()
     return jsonify({'content': comment.to_dict()})
@@ -47,6 +49,8 @@ def edit_comment(comment_id):
 @token_required
 def delete_comment(comment_id):
     comment = Comments.query.get(comment_id)
+    if g.current_user.id != comment.user_id:
+        return jsonify({"message": "Unauthorized"}), 401
     db.session.delete(comment)
     db.session.commit()
     return jsonify({"message": "comment deleted successfully"})

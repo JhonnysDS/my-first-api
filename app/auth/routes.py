@@ -45,9 +45,8 @@ def login():
                         timedelta(days=1),
                  "isLogged":True },
                 app.config['SECRET_KEY'], algorithm='HS256')
-            print(token)
             # Return the token to the client
-            return jsonify({'token': token}), 200
+            return jsonify({'token': token, 'user_id': user.id}), 200
         else:
             # If the user doesn't exist or the password is incorrect, return an error
             return jsonify({'message': 'Invalid username or password'}), 401
