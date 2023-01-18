@@ -33,7 +33,7 @@ def create_comment(post_id):
     #mostramos
     return jsonify({'comment': comment.to_dict()}), 201
 
-@comments_bp.route('/comments/<int:comment_id>', methods=['PUT'])
+@comments_bp.route('/comments/<int:comment_id>', methods=['GET', 'PUT'])
 @token_required
 def edit_comment(comment_id):
     data = request.get_json()
@@ -42,7 +42,7 @@ def edit_comment(comment_id):
         return  jsonify({"message": "Unauthorized"}), 401
     comment.content = data['content']
     db.session.commit()
-    return jsonify({'content': comment.to_dict()})
+    return jsonify(comment.to_dict())
 
 
 @comments_bp.route('/comments/<int:comment_id>', methods=['DELETE'])
