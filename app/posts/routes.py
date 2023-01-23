@@ -55,7 +55,7 @@ def create_post():
             return jsonify({'Message': 'could not create a post'}), 500
 
 
-@posts_bp.route('/post/<int:post_id>', methods=['PUT'])
+@posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
 @token_required
 def update_post(post_id):
     #Obtenemos el json de los datos del post
