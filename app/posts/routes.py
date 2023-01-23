@@ -55,7 +55,7 @@ def create_post():
             return jsonify({'Message': 'could not create a post'}), 500
 
 
-@posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
+@posts_bp.route('/post/<int:post_id>', methods=['PUT'])
 @token_required
 def update_post(post_id):
     #Obtenemos el json de los datos del post
@@ -66,7 +66,7 @@ def update_post(post_id):
         #estos son los campos que se modifican
         post.title = data['title']
         post.content = data['content']
-        #guardamos los cambios
+          #guardamos los cambios
         db.session.commit()
         return jsonify({'post': post.to_dict()})
     except Exception:

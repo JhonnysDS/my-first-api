@@ -33,7 +33,16 @@ def create_comment(post_id):
     #mostramos
     return jsonify({'comment': comment.to_dict()}), 201
 
-@comments_bp.route('/comments/<int:comment_id>', methods=['GET', 'PUT'])
+
+
+@comments_bp.route('/comments/<int:comment_id>', methods=['GET'])
+@token_required
+def view_comment(comment_id):
+    comment = Comments.query.filter_by(id=comment_id).first()
+    return jsonify([comment.to_dict()])
+
+
+@comments_bp.route('/comments/<int:comment_id>', methods=['PUT'])
 @token_required
 def edit_comment(comment_id):
     data = request.get_json()
