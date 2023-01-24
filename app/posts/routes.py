@@ -4,7 +4,7 @@ from app import db
 
 from app.decorators.decorators import token_required
 from app.posts import posts_bp
-from flask import request, jsonify
+from flask import request, jsonify, g
 
 from app.posts.models import Posts
 from app.comments.models import Comments
@@ -64,6 +64,11 @@ def update_post(post_id):
     try:
         #obtenemos el post por su id
         post = Posts.query.get(post_id)
+
+        # Comprueba si el usuario actualmente autenticado es el mismo que creó el post
+        if post.user_id != g.current_user.id:
+            return jsonify({"Message": "No tienes permiso para actualizar este post"}), 401
+
         #estos son los campos que se modifican
         post.title = data['title']
         post.content = data['content']
@@ -74,10 +79,15 @@ def update_post(post_id):
         return jsonify({'Message': 'could update a post'}), 500
 
 
+
 @posts_bp.route('/posts/<int:post_id>', methods=['DELETE'])
 @token_required
 def delete_post(post_id):
     post = Posts.query.get(post_id)
+
+    # Comprueba si el usuario actualmente autenticado es el mismo que creó el post
+    if post.user_id != g.current_user.id:
+        return jsonify({"Message": "No tienes permiso para eliminar este post"}), 401
 
     # Eliminar todos los comentarios relacionados con ese post
     Comments.query.filter_by(post_id=post.id).delete()
@@ -86,3 +96,4 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
     return jsonify({"Message": "Post y sus comentarios relacionados eliminados con éxito"})
+
