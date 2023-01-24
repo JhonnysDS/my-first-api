@@ -7,6 +7,7 @@ from app.posts import posts_bp
 from flask import request, jsonify
 
 from app.posts.models import Posts
+from app.comments.models import Comments
 
 
 @posts_bp.route('/posts', methods=['GET'])
@@ -76,9 +77,12 @@ def update_post(post_id):
 @posts_bp.route('/posts/<int:post_id>', methods=['DELETE'])
 @token_required
 def delete_post(post_id):
-    #Obtenemos el json de los datos del post
-    data = request.get_json()
     post = Posts.query.get(post_id)
+
+    # Eliminar todos los comentarios relacionados con ese post
+    Comments.query.filter_by(post_id=post.id).delete()
+
+    # Eliminar el post
     db.session.delete(post)
     db.session.commit()
-    return jsonify({"Message": "post deleted successfully"})
+    return jsonify({"Message": "Post y sus comentarios relacionados eliminados con éxito"})
