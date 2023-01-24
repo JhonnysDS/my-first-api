@@ -13,5 +13,6 @@ class Posts(db.Model):
         return {
             'id': self.id,
             'title': self.title,
-            'content': self.content
+            'content': self.content,
+            'user_id':self.user_id
         }
