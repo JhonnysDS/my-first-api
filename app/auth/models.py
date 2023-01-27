@@ -1,3 +1,4 @@
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
@@ -7,7 +8,7 @@ class Users(db.Model):
     username = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-
+    comments = relationship("Comments", back_populates="users")
     def __init__(self, username, email, password):
         self.username = username
         self.email = email

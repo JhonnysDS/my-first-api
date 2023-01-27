@@ -1,6 +1,7 @@
 from flask import jsonify, request, g
 
 from app import db
+from app.auth.models import Users
 from app.comments import comments_bp
 from app.comments.models import Comments
 from app.decorators.decorators import token_required
@@ -10,10 +11,14 @@ from app.posts.models import Posts
 @comments_bp.route('/posts/<int:post_id>/comments', methods=['GET'])
 def get_comments(post_id):
     post = Posts.query.get(post_id)
-    comments = post.comments
+    comments = (db.session.query(Comments, Users.username)
+                .join(Users, Comments.user_id == Users.id)
+                .filter(Comments.post_id == post_id)
+                .order_by(Comments.id.desc())
+                .all())
     if len(comments) == 0:
-        return  jsonify({"Message": "No yet commented on"})
-    return jsonify([comment.to_dict() for comment in comments])
+        return jsonify({"Message": "No yet commented on"})
+    return jsonify([{**comment.to_dict(), 'username': username} for comment, username in comments])
 
 
 @comments_bp.route('/posts/<int:post_id>/comments', methods=['GET', 'POST'])
