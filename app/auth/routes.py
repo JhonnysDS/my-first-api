@@ -49,6 +49,6 @@ def login():
             return jsonify({'token': token, 'user_id': user.id}), 200
         else:
             # If the user doesn't exist or the password is incorrect, return an error
-            return jsonify({'message': 'Invalid username or password'}), 401
+            return jsonify({'message': 'Invalid username or password'})
     except Exception as e:
         return jsonify({'message': 'Error logging in: {}'.format(str(e))}), 500
