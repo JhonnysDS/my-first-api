@@ -27,7 +27,7 @@ def register():
 
         return jsonify({'message': 'User created successfully'}), 201
     except Exception:
-        return jsonify({'message': 'Error creating user'}), 500
+        return jsonify({'message': 'Error creating user'}), 200
 
 
 @auth_bp.route('/login', methods=['POST'])
