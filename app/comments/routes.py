@@ -31,10 +31,15 @@ def create_comment(post_id):
     #obtenemos el post por su id
     post = Posts.query.get(post_id)
     #seleccionamos el campo de comentario que se va a enviar datos
+    if not data['content']:
+        return jsonify({'error': 'The content field cannot be empty'})
     comment = Comments(content=data['content'], post=post, user_id=user_id)
     #guardamos
-    db.session.add(comment)
-    db.session.commit()
+    try:
+        db.session.add(comment)
+        db.session.commit()
+    except:
+        return jsonify({'error': 'The comment was not able to be created'})
     #mostramos
     return jsonify({'comment': comment.to_dict()}), 201
 
