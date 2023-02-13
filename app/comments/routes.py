@@ -17,7 +17,7 @@ def get_comments(post_id):
                 .order_by(Comments.id.desc())
                 .all())
     if len(comments) == 0:
-        return jsonify({"Message": "No yet commented on"})
+        return jsonify({"message": "No yet commented on"})
     return jsonify([{**comment.to_dict(), 'username': username} for comment, username in comments])
 
 

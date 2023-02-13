@@ -28,7 +28,7 @@ def get_post(post_id):
     #condicional que verifica si existe o no
     if post is None:
         #mostramos el mensaje de que no existe
-        return jsonify({'error': 'Post not found'}), 404
+        return jsonify({'error': 'Post not found'})
     return jsonify(post.to_dict())
 
 
