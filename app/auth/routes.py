@@ -58,7 +58,8 @@ def login():
 def get_user_by_id(user_id):
     user = Users.query.filter_by(id=user_id).first()
     if user is not None:
-        return jsonify({'username': user.username}), 200
+        return jsonify({'id': user.id,''
+                                      'username': user.username}), 200
     else:
         return jsonify({'message': 'User not found'}), 404
 
