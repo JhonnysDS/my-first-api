@@ -52,3 +52,22 @@ def login():
             return jsonify({'message': 'Invalid username or password'})
     except Exception as e:
         return jsonify({'message': 'Error logging in: {}'.format(str(e))}), 500
+
+
+@auth_bp.route('/user/<int:user_id>', methods=['GET'])
+def get_user_by_id(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user is not None:
+        return jsonify({'username': user.username}), 200
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
+@auth_bp.route('/users', methods=['GET'])
+def get_all_users():
+    users = Users.query.all()
+    if not users:
+        return jsonify({'message': 'No users found'}), 404
+    user_list = []
+    for user in users:
+        user_list.append({'id': user.id, 'username': user.username})
+    return jsonify(user_list)
