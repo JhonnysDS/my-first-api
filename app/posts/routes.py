@@ -50,6 +50,9 @@ def create_post():
         for post_data in data:
             if not post_data['title'] or not post_data['content']:
                 return jsonify({'message': 'Title and content are required'})
+            post = Posts.query.filter_by(title=post_data['title'], content=post_data['content']).first()
+            if Posts.query.filter_by(title=post_data['title']).first():
+                return jsonify({'message': f'This post already exists'})
             try:
                 post = Posts(title=post_data['title'],
                              content=post_data['content'],
@@ -60,6 +63,8 @@ def create_post():
                 return jsonify({'Message': 'could not create a post'}), 500
         db.session.commit()
         return jsonify({'message': 'Posts created successfully'}), 201
+
+
 
 
 
