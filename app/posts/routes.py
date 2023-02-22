@@ -14,10 +14,12 @@ from app.comments.models import Comments
 @token_required
 def get_posts():
 
-    #llamamos todos los registros de la tabla posts
-    posts = Posts.query.all()
-    #los mostramos
+    # llamamos todos los registros de la tabla posts y los invertimos para que el último sea el primero
+    posts = Posts.query.order_by(Posts.id.desc()).all()
+
+    # los mostramos
     return jsonify([post.to_dict() for post in posts])
+
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['GET'])
@@ -45,15 +47,20 @@ def create_post():
         dataAuthToken = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
         user_id = dataAuthToken['id']
         data = request.get_json()
-        try:
-            post = Posts(title=data['title'],
-                         content=data['content'],
-                         user_id=user_id)
-            db.session.add(post)
-            db.session.commit()
-            return jsonify(post.to_dict()), 201
-        except Exception:
-            return jsonify({'Message': 'could not create a post'}), 500
+        for post_data in data:
+            if not post_data['title'] or not post_data['content']:
+                return jsonify({'message': 'Title and content are required'})
+            try:
+                post = Posts(title=post_data['title'],
+                             content=post_data['content'],
+                             user_id=user_id)
+                db.session.add(post)
+            except Exception:
+                db.session.rollback()
+                return jsonify({'Message': 'could not create a post'}), 500
+        db.session.commit()
+        return jsonify({'message': 'Posts created successfully'}), 201
+
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
