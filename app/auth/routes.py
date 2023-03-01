@@ -13,6 +13,22 @@ from entrypoint import app
 def register():
     data=request.get_json()
     try:
+        #buscamos en la base de datos el correo y el nombre de usuarip para validar si existen
+        existing_username = Users.query.filter_by(username=data['username']).first()
+        existing_email = Users.query.filter_by(email=data['email']).first()
+
+        # verificamos si el correo o el username existe
+        if existing_username and existing_email:
+            return jsonify({'message': 'sorry, the email and the username already exist'})
+
+        #verificamos si el correo existe
+        if existing_email:
+            return jsonify({"message":"sorry, the email already exist"})
+
+        #Verificamos si el nombre de usuario existe
+        if existing_username:
+            return jsonify({'message':'sorry, the username already exist'})
+
         #Creamos el nuevo usuario
         user = Users(username=data['username'],
                      email=data['email'],
