@@ -8,6 +8,14 @@ from flask import request, jsonify, g
 
 from app.posts.models import Posts
 from app.comments.models import Comments
+import os
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'static/images'
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in {'jpg', 'jpeg', 'png'}
 
 
 @posts_bp.route('/posts', methods=['GET'])
@@ -34,7 +42,7 @@ def get_post(post_id):
     return jsonify(post.to_dict())
 
 
-@posts_bp.route('/create-posts', methods=['GET', 'POST'])
+""""@posts_bp.route('/create-posts', methods=['GET', 'POST'])
 @token_required
 def create_post():
     if 'Authorization' in request.headers:
@@ -62,10 +70,54 @@ def create_post():
                 db.session.rollback()
                 return jsonify({'Message': 'could not create a post'}), 500
         db.session.commit()
-        return jsonify({'message': 'Posts created successfully'}), 201
+        return jsonify({'message': 'Posts created successfully'}), 201"""
 
 
+@posts_bp.route('/create-posts', methods=['POST'])
+@token_required
+def create_post():
+    if 'Authorization' in request.headers:
+        token = request.headers['Authorization']
 
+        if token:
+            token = token.split(" ")[1]
+
+        from entrypoint import app
+        dataAuthToken = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+        user_id = dataAuthToken['id']
+
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            return jsonify({'message': 'No file part'})
+
+        file = request.files.get('file')
+        if not file or file.filename == '':
+            return jsonify({'message': 'No selected file'})
+        if not allowed_file(file.filename):
+            return jsonify({'message': 'Invalid file type'})
+
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        data = request.form.to_dict()
+        if not data.get('title') or not data.get('content'):
+            return jsonify({'message': 'Title and content are required'})
+
+        post = Posts.query.filter_by(title=data.get('title'), content=data.get('content')).first()
+        if post:
+            return jsonify({'message': f'This post already exists'})
+
+        try:
+            post = Posts(title=data.get('title'),
+                         content=data.get('content'),
+                         user_id=user_id,
+                         image_filenames=[filename])
+            db.session.add(post)
+            db.session.commit()
+            return jsonify({'message': 'Post created successfully'}), 201
+        except Exception:
+            db.session.rollback()
+            return jsonify({'Message': 'could not create a post'}), 500
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
