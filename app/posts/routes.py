@@ -42,7 +42,8 @@ def get_post(post_id):
     return jsonify(post.to_dict())
 
 
-""""@posts_bp.route('/create-posts', methods=['GET', 'POST'])
+
+@posts_bp.route('/create-posts', methods=['GET', 'POST'])
 @token_required
 def create_post():
     if 'Authorization' in request.headers:
@@ -70,10 +71,10 @@ def create_post():
                 db.session.rollback()
                 return jsonify({'Message': 'could not create a post'}), 500
         db.session.commit()
-        return jsonify({'message': 'Posts created successfully'}), 201"""
+        return jsonify({'message': 'Posts created successfully'}), 201
 
 
-@posts_bp.route('/create-posts', methods=['POST'])
+"""@posts_bp.route('/create-posts', methods=['POST'])
 @token_required
 def create_post():
     if 'Authorization' in request.headers:
@@ -117,8 +118,7 @@ def create_post():
             return jsonify({'message': 'Post created successfully'}), 201
         except Exception:
             db.session.rollback()
-            return jsonify({'Message': 'could not create a post'}), 500
-
+            return jsonify({'Message': 'could not create a post'}), 500"""
 
 @posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
 @token_required
