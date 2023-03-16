@@ -91,7 +91,6 @@ def register():
                         os.makedirs(file_dir, exist_ok=True)
                         photo_path = os.path.join(file_dir, (image_path + image_ext))
 
-                        print('Estas son las fotos path:' + photo_path)
                         #creación de un groupdict
                         data = result.groupdict().get("data")
 
