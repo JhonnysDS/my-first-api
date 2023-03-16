@@ -3,17 +3,11 @@ import json
 import os
 import re
 from datetime import datetime, timedelta
-
 import jwt
 from flask import request, jsonify, current_app
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql.functions import current_user
-from werkzeug.utils import secure_filename
-
 from app import db
 from app.auth import auth_bp
 from app.auth.models import Users
-from app.decorators.decorators import token_required
 from entrypoint import app
 
 
@@ -97,6 +91,7 @@ def register():
                         os.makedirs(file_dir, exist_ok=True)
                         photo_path = os.path.join(file_dir, (image_path + image_ext))
 
+                        print('Estas son las fotos path:' + photo_path)
                         #creación de un groupdict
                         data = result.groupdict().get("data")
 

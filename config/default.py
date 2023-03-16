@@ -5,8 +5,8 @@ from os.path import abspath, dirname, join
 BASE_DIR = dirname(dirname(abspath(__file__)))
 
 # Media dir
-MEDIA_DIR = join(BASE_DIR, '/app/static/images/profile')
-USER_IMAGES_DIR = join(MEDIA_DIR, 'users')
+MEDIA_DIR = join(BASE_DIR, 'app/static/images/')
+USER_IMAGES_DIR = join(MEDIA_DIR, 'profile')
 
 SECRET_KEY = 'dc42962750d69126ab8a216a9e1c70e8aa61edd5193c31f26346ca5de12b'
 
