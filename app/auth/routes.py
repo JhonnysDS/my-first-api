@@ -8,6 +8,7 @@ from flask import request, jsonify, current_app
 from app import db
 from app.auth import auth_bp
 from app.auth.models import Users
+from app.decorators.decorators import token_required
 from entrypoint import app
 
 
@@ -161,12 +162,14 @@ def login():
 
 
 @auth_bp.route('/user/<int:user_id>', methods=['GET'])
+@token_required
 def get_user_by_id(user_id):
     user = Users.query.filter_by(id=user_id).first()
     if user is not None:
-        return jsonify({'id': user.id,''
-                                      'username': user.username,
-                                        'email': user.email,}), 200
+        return jsonify({'id': user.id,
+                        'username': user.username,
+                        'email': user.email,
+                        'avatar': user.avatar}), 200
     else:
         return jsonify({'message': 'User not found'}), 404
 
