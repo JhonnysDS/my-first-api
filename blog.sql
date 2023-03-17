@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-03-2023 a las 16:05:35
+-- Tiempo de generación: 17-03-2023 a las 15:18:39
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 8.1.6
 
@@ -88,7 +88,8 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`, `avata
 (2, 'jds', 'jds@mail.com', 'pbkdf2:sha256:260000$pn7Rzpk51PpLxKXz$350d11bb0c4a24acf7f00004ed31ea1b4a9860f29b7b83abfd60c972cb9eb0c5', '2023-01-16 18:34:18', ''),
 (3, 'kal', 'kal@gmail.com', 'pbkdf2:sha256:260000$WwOMoRt1SnRBnDrf$222b0c9beaa267acb3bb16174bae9a80d2b87fcfc27bfbd062e60bc4f3343b0d', '2023-01-16 16:58:40', ''),
 (30, '', '', 'pbkdf2:sha256:260000$8T6MCEr6mqjTX7sN$d8b6b44094b18e366ddf551f66d2070eeef3135f1858408cf198f199f7fec1fd', '2023-02-09 21:11:16', ''),
-(93, 'anonimo', 'anonimo@gmail.com', 'pbkdf2:sha256:260000$3rVd5XEG2s6y0D3X$d1cbfd4e0bae74e6a3711b45bc9bbe33e1c5efe7f09410c3c1380ceb2ef7b01b', '2023-03-16 15:03:14', '{\'imagenFullName\': \'7YLEfFfln_U_1280x720.jpg\', \'imageName\': \'7YLEfFfln_U_1280x720\', \'imageExt\': \'.jpg\', \'imageSize\': 161820, \'imagePath\': \'7YLEfFfln_U_1280x720-20230316100314\', \'imageServer\': True}');
+(102, 'anonimo', 'anonimo@gmail.com', 'pbkdf2:sha256:260000$xVLQWhss8NTlp4UQ$7e969c5272914942862ba3103c2661c93767ebf9c9239e8607375e6ee87e4db0', '2023-03-16 16:20:17', '{\'imagenFullName\': \'anonimous.jpg\', \'imageName\': \'anonimous\', \'imageExt\': \'.jpg\', \'imageSize\': 921910, \'imagePath\': \'anonimous-20230316112017\', \'imageServer\': true}'),
+(104, 'gato', 'gato@gmail.com', 'pbkdf2:sha256:260000$LW1dZC4HcFDI7l26$934a6418eb66200636ec35f863bd0b3c5eb80440cc29527d9587225057f79632', '2023-03-16 19:33:39', '{\'imagenFullName\': \'cat-gbfd27a440_1280.jpg\', \'imageName\': \'cat-gbfd27a440_1280\', \'imageExt\': \'.jpg\', \'imageSize\': 320729, \'imagePath\': \'cat-gbfd27a440_1280-20230316143339\', \'imageServer\': True}');
 
 --
 -- Índices para tablas volcadas
@@ -137,7 +138,7 @@ ALTER TABLE `posts`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
 
 --
 -- Restricciones para tablas volcadas
