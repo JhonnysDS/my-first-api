@@ -122,10 +122,13 @@ def updateUser(user_id):
 
 
     if data.get('avatar') is not None:
+        if user.avatar:
+            delete_file(user_id)
         user.avatar = data['avatar']
         photo = user.avatar
         photoAppended = {}
         if photo:
+
             os.makedirs(file_dir, exist_ok=True)
             result = re.search("data:image/(?P<ext>.*?);base64,(?P<data>.*)", photo['imagePath'], re.DOTALL)
 
@@ -160,7 +163,7 @@ def updateUser(user_id):
                     'imageServer': 'true'
                 }
 
-            user.avatar = photoAppended
+                user.avatar = photoAppended
 
     db.session.commit()
     return jsonify({'message': 'user updated successfully'})
@@ -171,7 +174,6 @@ def updateUser(user_id):
 @auth_bp.route('/deletefile/<int:user_id>', methods=['DELETE'])
 def delete_file(user_id):
     user = Users.query.filter_by(id=user_id).first()
-    print(user.avatar)
     avatar_dict = json.loads(user.avatar.replace("'", "\""))
     file_path = os.path.join(file_dir, avatar_dict["imagePath"] + avatar_dict["imageExt"])
     if os.path.exists(file_path):
