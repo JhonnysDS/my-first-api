@@ -71,7 +71,7 @@ def register():
                             'imageExt': image_ext,
                             'imageSize': image_size,
                             'imagePath': image_path,
-                            'imageServer': True
+                            'imageServer': 'true'
                         }
 
 
