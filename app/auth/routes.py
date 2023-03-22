@@ -110,14 +110,14 @@ def updateUser(user_id):
     if data.get('username'):
         existing_user = Users.query.filter(Users.username == data['username']).first()
         if existing_user and existing_user.id != user_id:
-            return jsonify({'message': 'El nombre de usuario ya existe. Por favor, elija otro.'}), 400
+            return jsonify({'message': 'This username already exist, please write other.'})
         user.username = data['username']
 
     # Validar si el correo electrónico ya existe
     if data.get('email'):
         existing_user = Users.query.filter(Users.email == data['email']).first()
         if existing_user and existing_user.id != user_id:
-            return jsonify({'message': 'El correo electrónico ya existe. Por favor, elija otro.'}), 400
+            return jsonify({'message': 'This email already exist, please write other.'})
         user.email = data['email']
 
 
