@@ -4,12 +4,13 @@ import os
 import re
 from datetime import datetime, timedelta
 import jwt
-from flask import request, jsonify, current_app, g
+from flask import request, jsonify, current_app, g, Response
 from app import db
 from app.auth import auth_bp
 from app.auth.models import Users
 from app.decorators.decorators import token_required
 from entrypoint import app
+import demjson
 
 
 file_dir = current_app.config['USER_IMAGES_DIR']
@@ -156,7 +157,7 @@ def updateUser(user_id):
                     'imageExt': image_ext,
                     'imageSize': image_size,
                     'imagePath': image_path,
-                    'imageServer': True
+                    'imageServer': 'true'
                 }
 
             user.avatar = photoAppended
@@ -167,100 +168,17 @@ def updateUser(user_id):
 
 
 
-
-
-@auth_bp.route("/update-user", methods=["PUT"])
-def update_user():
-    try:
-        # Obtenemos el objeto json que viene desde el frontend
-        if request.data:
-            userDatas = json.loads(request.data)
-
-            # Declaramos las variables necesarias para actualizar la información
-            user_id = userDatas['user_id']
-            username = userDatas['username']
-            email = userDatas['email']
-            avatar = userDatas['avatar']
-
-            user = Users.query.filter_by(id=user_id).first()
-
-            if user is None:
-                return jsonify({
-                    "message": "User not found"
-                }, 404)
-
-            # Check if the new username and email already exist in the db
-            if username != user.username:
-                existing_username = Users.query.filter_by(username=username).first()
-                if existing_username is not None:
-                    return jsonify({
-                        "message": "Username already exists"
-                    }, 400)
-                else:
-                    user.username = username
-
-            if email != user.email:
-                existing_email = Users.query.filter_by(email=email).first()
-                if existing_email is not None:
-                    return jsonify({
-                        "message": "Email already exists"
-                    }, 400)
-                else:
-                    user.email = email
-
-            if avatar:
-                photo = avatar
-                photoAppended = {}
-
-                os.makedirs(file_dir, exist_ok=True)
-                result = re.search("data:image/(?P<ext>.*?);base64,(?P<data>.*)", photo['imagePath'], re.DOTALL)
-
-                if result:
-                    image_full_name = photo['imagenFullName']
-                    image_name = photo['imageName']
-                    image_ext = photo['imageExt']
-                    image_size = photo['imageSize']
-
-                    #se le contatena al nombre del archivo una fecha con tiempo
-                    dateNow = datetime.now()
-                    image_path = image_name + '-' + dateNow.strftime('%Y%m%d%H%M%S')
-
-                    os.makedirs(file_dir, exist_ok=True)
-                    photo_path = os.path.join(file_dir, (image_path + image_ext))
-
-                    #creación de un groupdict
-                    data = result.groupdict().get("data")
-
-                    #bases64 decodificación
-                    img = base64.urlsafe_b64decode(data)
-
-                    with open(photo_path, "wb") as f:
-                        f.write(img)
-
-                    photoAppended = {
-                        'imagenFullName': image_full_name,
-                        'imageName': image_name,
-                        'imageExt': image_ext,
-                        'imageSize': image_size,
-                        'imagePath': image_path,
-                        'imageServer': True
-                    }
-
-                user.avatar = photoAppended
-
-            db.session.commit()
-            return jsonify({
-                "message": "User updated successfully"
-            }, 200)
-
-        return jsonify({
-            "message": "User could not be updated"
-        }, 400)
-    except Exception as e:
-        return jsonify({
-            "message": "Error updating user",
-            "error": str(e)
-        }, 500)
+@auth_bp.route('/deletefile/<int:user_id>', methods=['DELETE'])
+def delete_file(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    print(user.avatar)
+    avatar_dict = json.loads(user.avatar.replace("'", "\""))
+    file_path = os.path.join(file_dir, avatar_dict["imagePath"] + avatar_dict["imageExt"])
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return jsonify({'message': 'Archivo eliminado con éxito'})
+    else:
+        return jsonify({'message': 'El archivo no existe'})
 
 
 
