@@ -11,14 +11,14 @@ from app.posts.models import Posts
 @comments_bp.route('/posts/<int:post_id>/comments', methods=['GET'])
 def get_comments(post_id):
     post = Posts.query.get(post_id)
-    comments = (db.session.query(Comments, Users.username)
+    comments = (db.session.query(Comments, Users.username, Users.avatar)
                 .join(Users, Comments.user_id == Users.id)
                 .filter(Comments.post_id == post_id)
                 .order_by(Comments.id.desc())
                 .all())
     if len(comments) == 0:
         return jsonify({"message": "No yet commented on"})
-    return jsonify([{**comment.to_dict(), 'username': username} for comment, username in comments])
+    return jsonify([{**comment.to_dict(), 'username': username, 'avatar': avatar} for comment, username, avatar in comments])
 
 
 @comments_bp.route('/posts/<int:post_id>/comments', methods=['GET', 'POST'])
