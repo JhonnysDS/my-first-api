@@ -183,6 +183,31 @@ def delete_file(user_id):
         return jsonify({'message': 'El archivo no existe'})
 
 
+@auth_bp.route("/change/password/<int:user_id>", methods=["PUT"])
+def change_password(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    data = request.get_json()
+
+    if not user:
+        return jsonify({'message':'User not found'})
+
+    #Obtenemos la contraseña antigua y la nueva contraseña.
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+
+    #verificamos que la contraseña antigua sea la correcta.
+    if not user.check_password(old_password):
+        return jsonify({'message':'The old password is incorrect'})
+
+    #actualizar la contraseña del usuario.
+    user.set_password(new_password)
+    db.session.commit()
+
+    return jsonify(
+        {'message':'Password changed successfully'})
+
+
+
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
